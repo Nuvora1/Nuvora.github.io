@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Nuvora</title>
+  <link rel="icon" href="nuvora-logo.png" type="image/png" />
+  <style>
+    body {
+      background-color: #161d25;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Logo oben links */
+    .logo {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      width: 190px;
+      height: 190px;
+      z-index: 10;
+    }
+
+    /* Container für Kategorien unter Logo */
+    .categories {
+      position: fixed;
+      top: 40%; /* direkt unter Logo (190 + 10px margin + 10px extra) */
+      left: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    /* Einzelne Kategorie-Kästen */
+    .category-box {
+      background-color: #1f2a38;
+      border-radius: 8px;
+      padding: 8px 16px;
+      width: 120px;
+      font-size: 1rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+      text-align: center;
+    }
+
+    .category-box:hover {
+      background-color: #7289da;
+    }
+
+    /* Suchleiste */
+    .search-bar {
+      margin: 220px auto 30px auto;
+      max-width: 600px;
+      text-align: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .search-bar input {
+      padding: 14px;
+      width: 100%;
+      max-width: 350px;
+      border-radius: 8px;
+      border: none;
+      font-size: 18px;
+    }
+
+    /* Grid der Spiele */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      width: 90%;
+      max-width: 1300px;
+      margin: 0 auto 40px auto;
+      padding-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .game-card {
+      background-color: #1f2a38;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .game-card img {
+      width: 100%;
+      border-radius: 8px;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    .game-card h2 {
+      margin-top: 10px;
+      font-size: 1.1rem;
+    }
+
+    .game-card p {
+      font-size: 0.9rem;
+      margin-top: 6px;
+      min-height: 48px;
+    }
+
+    .game-card a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 7px 16px;
+      background-color: #556677;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .game-card a:hover {
+      background-color: #7289da;
+    }
+
+      .discord-button,
+.discord-button.scrolling {
+  transition: all 0.15s ease; /* schnellerer Übergang */
+}
+
+
+  .discord-button {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    width: 160px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration: none;
+    background: linear-gradient(135deg, #1d2631, #2e3b4c);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    box-shadow: 0 0 10px rgba(30, 45, 60, 0.6), 0 0 20px rgba(0, 162, 255, 0.1);
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    z-index: 1;
+  }
+
+  .discord-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(0, 174, 255, 0.2), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.5s ease;
+    z-index: 0;
+  }
+
+  .discord-button:hover::before {
+    left: 100%;
+  }
+
+  .discord-button:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 0 15px rgba(0, 162, 255, 0.3), 0 0 30px rgba(0, 174, 255, 0.2);
+  }
+
+  .discord-button span {
+    position: relative;
+    z-index: 1;
+    text-decoration: none;
+  }
+
+  .discord-button.scrolling {
+    background: linear-gradient(135deg, #2e4b53, #74a9db) !important; /* leicht leuchtendes Pink */
+    color: #1d2631 !important; /* dunkle Schrift */
+    border-color: rgba(102, 255, 102, 0.6); /* helles Grün */
+    box-shadow:
+      0 0 10px rgba(102, 255, 102, 0.7); /* grüner glow */
+    transition: all 0.3s ease;
+  }
+
+  .discord-button.scrolling::before {
+    background: linear-gradient(120deg, transparent, rgba(102, 255, 102, 0.5), transparent);
+    /* grüner schimmernder Effekt */
+  }
+
+
+
+
+
+
+  /* Theme-Switcher Hebel */
+  .theme-toggle {
+    position: fixed;
+    right: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 100px;
+    background-color: #222;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9999;
+    transition: background-color 0.3s ease;
+  }
+
+  .theme-toggle::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background-color: #888;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    transform: translateY(0);
+  }
+
+  body.light-mode .theme-toggle {
+    background-color: #1f2f3a;
+  }
+
+  body.light-mode .theme-toggle::before {
+    background-color: #e6dada;
+    transform: translateY(20px);
+  }
+
+  /* Light Theme Farben */
+  body.light-mode {
+    background-color: #f4f4f4;
+    color: #111;
+  }
+
+  body.light-mode .category-box {
+    background-color: #e0e0e0;
+    color: #111;
+  }
+
+  body.light-mode .category-box:hover {
+    background-color: #a8c6ff;
+  }
+
+  body.light-mode .game-card {
+    background-color: #ffffff;
+    color: #111;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+
+  body.light-mode .game-card a {
+    background-color: #c4c4c4;
+    color: #000;
+  }
+
+  body.light-mode .game-card a:hover {
+    background-color: #7289da;
+  }
+
+  </style>
+</head>
+
+
+
+
+<body>
+
+  <img src="nuvora-logo.png" alt="Nuvora Logo" class="logo" />
+
+  <div class="categories">
+    <div class="category-box" data-category="all">All</div>
+    <div class="category-box" data-category="shooter">Shooter</div>
+    <div class="category-box" data-category="story">Story</div>
+    <div class="category-box" data-category="vehicle">Vehicle</div>
+  </div>
+
+  <div class="search-bar">
+    <input id="searchInput" type="text" placeholder="Search for a game..." />
+  </div>
+
+<a href="https://discord.gg/uDa2rC85gz" target="_blank" class="discord-button">
+  Join our Discord
+</a>
+
+
+
+
+  <div class="game-grid" id="gameGrid">
+    <div class="game-card" data-name="valorant" data-category="shooter" data-category="all">
+      <img src="https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/d0db663bf28844dcbd744935cdd8c71083e0031c-5600x3150.jpg" alt="Valorant" />
+      <h2>Valorant</h2>
+      <p>Tactical 5v5 shooter by Riot Games. High skill, cool agents.</p>
+      <a href="https://playvalorant.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="fortnite" data-category="shooter">
+      <img src="https://cdn1.epicgames.com/offer/fn/FNBR_35-00_C6MS1_EGS_Launcher_KeyArt_FN_Blade_2560x1440_2560x1440-8fd35061502b51f1df276474d28e7f59" alt="Fortnite" />
+      <h2>Fortnite</h2>
+      <p>Popular battle royale with building and fighting.</p>
+      <a href="https://www.epicgames.com/fortnite/de/home" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="genshin impact" data-category="story">
+      <img src="https://fastcdn.hoyoverse.com/content-v2/plat/155813/dae03c619499ac36c13a0f6316999e3e_7640076682718645514.jpeg" alt="Genshin Impact" />
+      <h2>Genshin Impact</h2>
+      <p>Open-world action RPG with anime-style graphics and elemental combat.</p>
+      <a href="https://genshin.hoyoverse.com/en" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="destiny 2" data-category="shooter">
+      <img src="https://cdn1.epicgames.com/offer/428115def4ca4deea9d69c99c5a5a99e/DE_Bungie_TheFinalShape_S3_2560x1440_2560x1440-6f41c77f0cfef43b05f198d353af7acf" alt="Destiny 2" />
+      <h2>Destiny 2</h2>
+      <p>Online multiplayer shooter with cooperative raids and competitive PvP.</p>
+      <a href="https://www.bungie.net/7/en/Destiny/NewLight" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="rainbow six siege" data-category="shooter">
+      <img src="https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/1lKKKfKHD5f84ViM2NHBOJ/f54c2f0dfd5ae10eb3d6c2e965fa732d/r6s-x-free-access.jpg" alt="Rainbow Six Siege" />
+      <h2>Rainbow Six Siege</h2>
+      <p>Tactical shooter focusing on destructible environments and team strategy.</p>
+      <a href="https://www.ubisoft.com/game/rainbow-six/siege" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="microsoft flight simulator" data-category="simulation">
+      <img src="https://xboxwire.thesourcemediaassets.com/sites/3/MSFS2024_JPG-1625d86dababd9f7a2f6-scaled.jpg" alt="Microsoft Flight Simulator" />
+      <h2>Microsoft Flight Simulator</h2>
+      <p>Realistic flight simulation with detailed aircraft and global mapping.</p>
+      <a href="https://www.flightsimulator.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="horizon forbidden west" data-category="action">
+      <img src="https://image.api.playstation.com/vulcan/ap/rnd/202107/3100/OXiJwdUx2Sy1oCViRudYIQ5f.jpg" alt="Horizon Forbidden West" />
+      <h2>Horizon Forbidden West</h2>
+      <p>Action RPG set in a post-apocalyptic world with robotic creatures.</p>
+      <a href="https://www.playstation.com/en-us/games/horizon-forbidden-west/" target="_blank">Official Website</a>
+    </div>
+
+
+    <div class="game-card" data-name="overwatch 2" data-category="shooter">
+      <img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2357570/e9cfc3828ebc0501e81a35760c451eb3b0734dea/header.jpg?t=1747769608" alt="Overwatch 2" />
+      <h2>Overwatch 2</h2>
+      <p>Team-based hero shooter with unique abilities and fast action.</p>
+      <a href="https://overwatch.blizzard.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="assassin's creed valhalla" data-category="story">
+      <img src="https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/01lCIVJSjkjeeg5BYDawQi/548d2eb6b9897542dc57bd0194dc3e7f/ACV_KeyArt11__960x540.png" />
+      <h2>Assassin's Creed Valhalla</h2>
+      <p>Epic Viking RPG with stealth and combat in open-world exploration.</p>
+      <a href="https://www.ubisoft.com/game/assassins-creed/valhalla" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="pubg" data-category="shooter">
+      <img src="https://wstatic-prod-boc.krafton.com/pubg-legacy/sites/5/2022/12/PUBG_BG_EGS@1920x1080.jpg" alt="PUBG" />
+      <h2>PUBG</h2>
+      <p>Battle royale with realistic gunplay and tactical gameplay.</p>
+      <a href="https://pubg.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="f1 23" data-category="vehicle">
+      <img src="https://media.contentapi.ea.com/content/dam/ea/f1/f1-23/common/featured-image/f123-featured-image-16x9.jpg.adapt.crop191x100.1200w.jpg" alt="F1 23" />
+      <h2>F1 23</h2>
+      <p>Official Formula 1 racing game with high realism and performance.</p>
+      <a href="https://www.ea.com/games/f1/f1-23" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="arma 3" data-category="shooter">
+      <img src="https://gaming-cdn.com/images/products/2308/616x353/spiel-steam-arma-3-apex-cover.jpg?v=1608049517" alt="Arma 3" />
+      <h2>Arma 3</h2>
+      <p>Realistic military simulation with large maps and tactical gameplay.</p>
+      <a href="https://arma3.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="motogp 24" data-category="vehicle">
+      <img src="https://img.expert-technomarkt.de/5000x5000x80/z4/motogp-24-nintendo-switch-8057168508628-4.jpeg" alt="MotoGP 24" />
+      <h2>MotoGP 24</h2>
+      <p>Official MotoGP racing simulation with real tracks and teams.</p>
+      <a href="https://motogpvideogame.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="beamng.drive" data-category="vehicle">
+      <img src="https://preview.redd.it/beamng-drive-fan-made-10th-anniversary-cover-v0-r0cg96cz7pjb1.png?auto=webp&s=ee5b4cba90dc7b67b53c681b667fb11af3f2fb81" alt="BeamNG.drive" />
+      <h2>BeamNG.drive</h2>
+      <p>Vehicle simulator with soft-body physics and realistic driving.</p>
+      <a href="https://www.beamng.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="far cry 6" data-category="shooter">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQLK6SPSokRPX1u9VIKJiQCLesYqwJReIO-Q&s" alt="Far Cry 6" />
+      <h2>Far Cry 6</h2>
+      <p>Open-world FPS with explosive action and a deep story in a rebel setting.</p>
+      <a href="https://www.ubisoft.com/game/far-cry/far-cry-6" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="forza horizon 5" data-category="vehicle">
+      <img src="https://image.api.playstation.com/vulcan/ap/rnd/202502/1900/631436cfbc1d64659c778e3783f29fafad6022145e0ffec8.jpg" alt="Forza Horizon 5" />
+      <h2>Forza Horizon 5</h2>
+      <p>Open-world racing game in vibrant Mexico with hundreds of cars.</p>
+      <a href="https://forza.net/horizon" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="titanfall 2" data-category="shooter">
+      <img src="https://image.api.playstation.com/vulcan/img/rnd/202010/0613/i7qX8GEZQ0jNOm59NG7L0hZN.jpg" alt="Titanfall 2" />
+      <h2>Titanfall 2</h2>
+      <p>Fast-paced shooter with wall-running and powerful mechs.</p>
+      <a href="https://www.ea.com/games/titanfall/titanfall-2" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="rocket league" data-category="vehicle">
+      <img src="https://cdn1.epicgames.com/offer/9773aa1aa54f4f7b80e44bef04986cea/EGS_RocketLeague_PsyonixLLC_S3_2560x1440-18eac9b5df1028fdcd5bad480ab6b085" alt="Rocket League" />
+      <h2>Rocket League</h2>
+      <p>High-powered hybrid of arcade-style soccer and vehicular mayhem.</p>
+      <a href="https://www.rocketleague.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="league of legends" data-category="shooter">
+      <img src="https://images.mein-mmo.de/medien/2019/07/lol.jpg" alt="League of Legends" />
+      <h2>League of Legends</h2>
+      <p>Popular MOBA with strategic team-based gameplay and massive esports scene.</p>
+      <a href="https://www.leagueoflegends.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="gta v" data-category="vehicle">
+      <img src="https://cdn1.epicgames.com/offer/b0cd075465c44f87be3b505ac04a2e46/EGS_GrandTheftAutoVEnhanced_RockstarNorth_S1_2560x1440-906d8ae76a91aafc60b1a54c23fab496" alt="GTA V" />
+      <h2>GTA V</h2>
+      <p>Open-world action game with endless possibilities and story missions.</p>
+      <a href="https://www.rockstargames.com/gta-v" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="the witcher 3" data-category="story">
+      <img src="https://cdn1.epicgames.com/offer/14ee004dadc142faaaece5a6270fb628/EGS_TheWitcher3WildHuntCompleteEdition_CDPROJEKTRED_S1_2560x1440-82eb5cf8f725e329d3194920c0c0b64f" alt="The Witcher 3" />
+      <h2>The Witcher 3</h2>
+      <p>Epic RPG adventure with rich story and open-world exploration.</p>
+      <a href="https://thewitcher.com/en/witcher3" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="roblox" data-category="story">
+      <img src="https://images.rbxcdn.com/d572cc8714e0ec771ad8268977880ddf.png" alt="Roblox" />
+      <h2>Roblox</h2>
+      <p>Massive online platform for creating and playing games made by users.</p>
+      <a href="https://www.roblox.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="apex legends" data-category="shooter">
+      <img src="https://gaming-cdn.com/images/news/articles/9130/cover/1000x563/staffel-23-von-apex-legends-bringt-die-ruckkehr-der-klassischen-waffen-und-fahigkeiten-cover672a4833f1b62.jpg" alt="Apex Legends" />
+      <h2>Apex Legends</h2>
+      <p>Fast-paced battle royale with unique heroes and tactical gameplay.</p>
+      <a href="https://www.ea.com/games/apex-legends" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="splitgate 2" data-category="shooter">
+      <img src="https://image.api.playstation.com/vulcan/ap/rnd/202502/2719/61ad0af45482e77178a63cf0a013b09c4b3790ba7bd2228c.jpg" alt="Splitgate 2" />
+      <h2>Splitgate 2</h2>
+      <p>Shoot and portals in fast arena action.</p>
+      <a href="https://www.splitgate.com/de/" target="_blank">Official Website</a>
+    </div>
+          <div class="game-card" data-name="call of duty" data-category="shooter">
+      <img src="https://images.cgames.de/images/gsgp/290/call-of-duty-black-ops-cold-war-2020_6100922.jpg" alt="Call of Duty" />
+      <h2>Call of Duty</h2>
+      <p>Popular shooter with intense multiplayer modes.</p>
+      <a href="https://www.callofduty.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="war thunder" data-category="vehicle">
+      <img src="https://warthunder.com/i/opengraph-wt.jpg" alt="War Thunder" />
+      <h2>War Thunder</h2>
+      <p>Realistic military vehicle MMO with planes, tanks, and ships.</p>
+      <a href="https://warthunder.com/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="minecraft" data-category="story">
+      <img src="https://www.nintendo.com/eu/media/images/10_share_images/games_15/nintendo_switch_4/2x1_NSwitch_Minecraft.jpg" alt="Minecraft" />
+      <h2>Minecraft</h2>
+      <p>Sandbox game with block building and endless creativity.</p>
+      <a href="https://www.minecraft.net/" target="_blank">Official Website</a>
+    </div>
+
+    <div class="game-card" data-name="vertigo2" data-category="shooter">
+      <img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/843390/header.jpg?t=1732293919" alt="Vertigo 2" />
+      <h2>Vertigo 2</h2>
+      <p>A fast-paced sci-fi shooter with intense multiplayer battles.</p>
+      <a href="https://store.steampowered.com/app/843390/Vertigo_2/" target="_blank">Official Website</a>
+    </div>
+
+
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const gameGrid = document.getElementById('gameGrid');
+    const gameCards = Array.from(gameGrid.children);
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim().toLowerCase();
+
+      gameCards.forEach(card => {
+        const name = card.getAttribute('data-name').toLowerCase();
+        // Hier: includes statt startsWith, damit alle Treffer angezeigt werden
+        if (name.includes(query)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+
+    // Kategorien klickbar machen (optional, falls du später Filter möchtest)
+    const categoryBoxes = document.querySelectorAll('.category-box');
+    categoryBoxes.forEach(box => {
+      box.addEventListener('click', () => {
+        const cat = box.getAttribute('data-category').toLowerCase();
+        searchInput.value = ''; // Suche zurücksetzen
+
+        // Zeige nur Karten dieser Kategorie
+        gameCards.forEach(card => {
+          if (card.getAttribute('data-category').toLowerCase() === cat) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+  
+    <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+
+    <script>
+  function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+  }
+
+  // Beim Laden prüfen
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-mode');
+    }
+  });
+
+
+    function toggleTheme() {
+    const body = document.body;
+    const button = document.getElementById('theme-toggle');
+    body.classList.toggle('light-mode');
+    button.textContent = body.classList.contains('light-mode') ? '☀️' : '🌙';
+  }
+
+      const discordButton = document.querySelector('.discord-button');
+  let isScrolling;
+  window.addEventListener('scroll', () => {
+    // Klasse beim Scrollen hinzufügen
+    discordButton.classList.add('scrolling');
+
+    // Scroll-Ende nach 200ms ohne scrollen erkennen
+    window.clearTimeout(isScrolling);
+    isScrolling = setTimeout(() => {
+      discordButton.classList.remove('scrolling');
+    }, 200);
+  });
+
+
+</script>
+
+
+</body>
+
+</html>
+
+
+
